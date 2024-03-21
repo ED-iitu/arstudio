@@ -38,7 +38,7 @@ class ProcessUploadedFiles implements ShouldQueue
 
         foreach ($this->filePath as $key => $filePath) {
             Log::info('Загрузка на яндекс диск начата');
-            $response = $disk->execute($filePath, $key, $this->title);
+            $response = $disk->execute($filePath, $key, $this->title, $this->userId);
 
             Log::info('Ответ от яндекса', [
                 'response' => $response

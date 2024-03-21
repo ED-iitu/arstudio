@@ -14,15 +14,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::controller(\App\Http\Controllers\API\V1\LoginController::class)->group(function(){
     Route::get('login/{provider}', 'redirectToProvider');
     Route::get('login/{provider}/callback', 'handleProviderCallback');
     Route::post('login', 'login');
     Route::post('register', 'register');
+});
+
+Route::middleware('auth:sanctum')->controller(\App\Http\Controllers\API\V1\LoginController::class)->group(function(){
+    Route::get('getUser', 'getUser');
 });
 
 Route::middleware('auth:sanctum')->controller(\App\Http\Controllers\API\V1\ArController::class)->group(function (){

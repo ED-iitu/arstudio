@@ -4,6 +4,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class YandexUpload
@@ -11,14 +12,16 @@ class YandexUpload
     //protected $token = 'y0_AgAAAAA_evKYAAtedAAAAAD8iqqsAADT3uZawARDDJ1daN3ibxmrKHUkWA';
     protected $token = 'y0_AgAAAAAPArVPAAtjBwAAAAD892QmAAC1YwWiclNCmadhiKObWyUEDkzHxQ';
 
-    public function execute($file, string $type, string $directory = '')
+    public function execute($file, string $type, string $directory, int $userId)
     {
         $client = new Client();
         // Создаем директорию пользователя
-        $userDirectory = $this->createUserDirectory((string)Auth::user()->id, $client);
+        $this->createUserDirectory((string)$userId, $client);
+
+        $directory = '/' . $userId . '/' . $directory;
+        Log::info($directory);
         // Создаем директорию группы
         $status    = $this->createDirectory($directory, $client);
-        $directory = Auth::user()->id . '/' . $directory;
 
         if ($status === 200 || $status === 201) {
             try {
@@ -38,6 +41,8 @@ class YandexUpload
                         'Authorization' => 'OAuth ' . $this->token,
                     ],
                 ]);
+
+                Log::info($response->getBody()->getContents());
 
                 // Получаем URL для загрузки файла
                 $uploadUrl = json_decode($response->getBody())->href;
@@ -61,21 +66,21 @@ class YandexUpload
 
                 // Получаем ответ от сервера
                 $statusCode = $response->getStatusCode();
+                $PublishResponse = json_decode($response->getBody()->getContents(), true);
 
                 // Если файл успешно загружен
                 if ($statusCode === 201 || $statusCode === 200) {
                     // публикуем файл
-                    $response = $client->request('GET', 'https://cloud-api.yandex.net/v1/disk/resources/public', [
+                    $response = $client->request('GET', 'https://cloud-api.yandex.net/v1/disk/resources?path=' . $directory, [
                         'headers' => [
-                            'Authorization' => $this->token
+                            'Authorization' =>  'OAuth ' . $this->token
                         ],
-                        'query' => [
-                            'path' => '/'.$directory . '/' . $fileName // Путь к файлу на Яндекс.Диске
-                        ]
                     ]);
 
                     $body      = json_decode($response->getBody()->getContents(), true);
-                    $publicUrl = "https://getfile.dokpub.com/yandex/get/". $body['items'][array_key_last($body['items'])]['public_url']; // Получение публичной ссылки на файл
+                    Log::info($body);
+                    $items     = $body['_embedded']['items'];
+                    $publicUrl = "https://getfile.dokpub.com/yandex/get/". $items[array_key_last($items)]['public_url']; // Получение публичной ссылки на файл
 
                     // Возвращаем URL загруженного файла вместе с сообщением об успехе
                     return [
@@ -86,6 +91,7 @@ class YandexUpload
                     return response()->json(['error' => 'Failed to upload file'], $statusCode);
                 }
             } catch (RequestException $e) {
+                Log::error($e);
                 // Если произошла ошибка запроса, возвращаем сообщение об ошибке
                 return response()->json(['error' => $e->getMessage()], $e->getCode());
             }

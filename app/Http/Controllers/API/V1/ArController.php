@@ -18,6 +18,7 @@ class ArController extends Controller
 
         // Получаем загруженные файлы из запроса
         $files = $request->allFiles();
+        $userId = Auth::user()->id;
 
         $arGroup = ArGroup::where('name', $title)->first();
 
@@ -45,7 +46,7 @@ class ArController extends Controller
             ];
 
             // Диспетчируем задачу на обработку данных в очередь
-            ProcessUploadedFiles::dispatch($title, $filesPath, $arGroup->id, Auth::user()->id);
+            ProcessUploadedFiles::dispatch($title, $filesPath, $arGroup->id, $userId);
         }
 
         // Возвращаем ответ клиенту без задержки
