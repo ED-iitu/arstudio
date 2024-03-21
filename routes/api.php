@@ -28,9 +28,14 @@ Route::controller(\App\Http\Controllers\API\V1\LoginController::class)->group(fu
 Route::middleware('auth:sanctum')->controller(\App\Http\Controllers\API\V1\ArController::class)->group(function (){
     Route::post('ar', 'create');
     Route::get('ar', 'getByGroupId');
+    Route::get('gallery', 'getGallery');
 });
 
 Route::controller(\App\Http\Controllers\API\V1\TariffController::class)->group(function (){
     Route::get('tariffs', 'getAll');
+});
+
+Route::controller(\App\Http\Controllers\API\V1\QuestionController::class)->group(function (){
+    Route::get('questions', 'getAll');
 });
 

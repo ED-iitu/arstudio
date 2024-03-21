@@ -68,4 +68,21 @@ class ArController extends Controller
             'data' => $arList
         ]);
     }
+
+    public function getGallery(): \Illuminate\Http\JsonResponse
+    {
+        $arList = Ar::where('user_id', Auth::user()->id)->get();
+
+        if ($arList->count() == 0) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Данные не найдены'
+            ], 404);
+        }
+
+        return response()->json([
+            'status'  => 'ok',
+            'data' => $arList
+        ]);
+    }
 }
