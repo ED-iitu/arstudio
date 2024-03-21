@@ -11,7 +11,9 @@ class LoginController extends Controller
 {
     public function redirectToProvider(string $driver): \Symfony\Component\HttpFoundation\RedirectResponse|\Illuminate\Http\RedirectResponse
     {
-        return Socialite::driver($driver)->redirect();
+        return Socialite::driver($driver)->redirect()->withHeaders([
+            'Access-Control-Allow-Origin' => 'https://arstudio.kz'
+        ]);
     }
 
     public function handleProviderCallback(string $driver): \Illuminate\Http\JsonResponse

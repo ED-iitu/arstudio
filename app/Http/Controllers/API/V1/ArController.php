@@ -7,6 +7,7 @@ use App\Models\ArGroup;
 use App\Services\YandexUpload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ArController extends Controller
@@ -32,6 +33,10 @@ class ArController extends Controller
             $imagePath = $file['image']->store('uploads');
             $videoPath = $file['video']->store('uploads');
             $mindPath  = $file['mind']->store('uploads');
+
+            Log::info($imagePath);
+            Log::info($videoPath);
+            Log::info($mindPath);
 
             $filesPath = [
                 'image' => $imagePath,
