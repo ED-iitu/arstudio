@@ -6,5 +6,10 @@ class ArGroup extends Model
 {
     protected $table = 'ar_groups';
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'user_id'];
+
+    public function ar()
+    {
+        return $this->hasMany(Ar::class, 'group_id', 'id');
+    }
 }

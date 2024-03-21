@@ -20,11 +20,12 @@ class ArController extends Controller
         $files = $request->allFiles();
         $userId = Auth::user()->id;
 
-        $arGroup = ArGroup::where('name', $title)->first();
+        $arGroup = ArGroup::where('name', $title)->where('user_id', $userId)->first();
 
         if (!$arGroup) {
             $arGroup = ArGroup::create([
-                'name' => $title
+                'name'    => $title,
+                'user_id' => $userId,
             ]);
         }
 
@@ -75,9 +76,9 @@ class ArController extends Controller
         ]);
     }
 
-    public function getGallery(): \Illuminate\Http\JsonResponse
+    public function getGallery(Request $request): \Illuminate\Http\JsonResponse
     {
-        $arList = Ar::where('user_id', Auth::user()->id)->get();
+        $arList  = ArGroup::where('user_id', Auth::user()->id)->with('ar')->get();
 
         if ($arList->count() == 0) {
             return response()->json([
