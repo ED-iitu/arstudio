@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ArController extends Controller
 {
@@ -31,11 +32,18 @@ class ArController extends Controller
 
         $filesPath = [];
 
-        foreach ($files['data'] as $file) {
+        foreach ($files['data'] as $key => $file) {
             Log::info($file);
-            $imagePath = $file['image']->store('uploads');
-            $videoPath = $file['video']->store('uploads');
-            $mindPath  = $file['mind']->store('uploads');
+            $hash = Str::random(40);
+            $extension = $request->file($file[$key])->getClientOriginalExtension();
+
+            $imagePath = $file['image'];
+            $videoPath = $file['video'];
+            $mindPath  = $file['mind'];
+
+            $request->file($file[$key])->storeAs(
+                'uploads', $hash . '.' . $extension
+            );
 
             Log::info($imagePath);
             Log::info($videoPath);
