@@ -33,7 +33,7 @@ class LoginController extends Controller
             $token   = $user->createToken('API Token')->plainTextToken;
             $cookies = Cookie::make('token', $token, 84000, null, 'https://arstudio.kz', false, false);
 
-            return redirect()->to('https://arstudio.kz')->withCookie($cookies);
+            return redirect()->to('https://arstudio.kz?token=' . $token)->withCookie($cookies);
         } catch (\Exception $e) {
             abort(403);
         }
