@@ -35,8 +35,10 @@ class ArController extends Controller
         $filesArray = $files['data'];
 
         foreach ($filesArray as $files) {
-
+            Log::info($files);
             foreach ($files as $key => $file) {
+                Log::info($key);
+                Log::info($file);
                 $hash = Str::random(40);
                 $extension = $request->file($file[$key])->getClientOriginalExtension();
 
