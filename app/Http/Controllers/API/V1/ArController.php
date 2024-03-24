@@ -32,6 +32,7 @@ class ArController extends Controller
         $filesPath = [];
 
         foreach ($files['data'] as $file) {
+            Log::info($file);
             $imagePath = $file['image']->store('uploads');
             $videoPath = $file['video']->store('uploads');
             $mindPath  = $file['mind']->store('uploads');
