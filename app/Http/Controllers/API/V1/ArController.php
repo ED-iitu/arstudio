@@ -32,33 +32,35 @@ class ArController extends Controller
 
         $filesPath = [];
 
-        $files = $files['data'];
+        $filesArray = $files['data'];
 
-        foreach ($files as $key => $file) {
+        foreach ($filesArray as $files) {
 
-            $hash = Str::random(40);
-            $extension = $request->file($file[$key])->getClientOriginalExtension();
+            foreach ($files as $key => $file) {
+                $hash = Str::random(40);
+                $extension = $request->file($file[$key])->getClientOriginalExtension();
 
-            $imagePath = $file['image'];
-            $videoPath = $file['video'];
-            $mindPath  = $file['mind'];
+                $imagePath = $file['image'];
+                $videoPath = $file['video'];
+                $mindPath  = $file['mind'];
 
-            $request->file($file[$key])->storeAs(
-                'uploads', $hash . '.' . $extension
-            );
+                $request->file($file[$key])->storeAs(
+                    'uploads', $hash . '.' . $extension
+                );
 
-            Log::info($imagePath);
-            Log::info($videoPath);
-            Log::info($mindPath);
+                Log::info($imagePath);
+                Log::info($videoPath);
+                Log::info($mindPath);
 
-            $filesPath = [
-                'image' => $imagePath,
-                'video' => $videoPath,
-                'mind'  => $mindPath
-            ];
+                $filesPath = [
+                    'image' => $imagePath,
+                    'video' => $videoPath,
+                    'mind'  => $mindPath
+                ];
 
-            // Диспетчируем задачу на обработку данных в очередь
-            ProcessUploadedFiles::dispatch($title, $filesPath, $arGroup->id, $userId);
+                // Диспетчируем задачу на обработку данных в очередь
+                ProcessUploadedFiles::dispatch($title, $filesPath, $arGroup->id, $userId);
+            }
         }
 
         // Возвращаем ответ клиенту без задержки
