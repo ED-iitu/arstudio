@@ -40,11 +40,11 @@ class ArController extends Controller
                 Log::info($key);
                 Log::info($file);
                 $hash = Str::random(40);
-                $extension = $request->file($file[$key])->getClientOriginalExtension();
+                $extension = $request->file($file)->getClientOriginalExtension();
 
-                $imagePath = $file['image'];
-                $videoPath = $file['video'];
-                $mindPath  = $file['mind'];
+                $imagePath = $file->image;
+                $videoPath = $file->video;
+                $mindPath  = $file->mind;
 
                 $request->file($file[$key])->storeAs(
                     'uploads', $hash . '.' . $extension
