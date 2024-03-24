@@ -40,7 +40,7 @@ class ArController extends Controller
                 Log::info($key);
                 Log::info($file);
                 $hash = Str::random(40);
-                $extension = $request->file($file)->getClientOriginalExtension();
+                $extension = $request->file($file->key)->getClientOriginalExtension();
 
                 $imagePath = $file->image;
                 $videoPath = $file->video;
