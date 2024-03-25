@@ -34,41 +34,41 @@ class ArController extends Controller
 
         $filesArray = $files['data'];
 
-        foreach ($filesArray as $files) {
-            Log::info($files);
-            foreach ($files as $key => $file) {
-                Log::info($key);
-                Log::info($file);
-                $hash = Str::random(40);
-                $extension = $request->file($file->key)->getClientOriginalExtension();
+        foreach ($filesArray as $file) {
+            $hash           = Str::random(40);
+            $imageExtension = $file['image']->getClientOriginalExtension();
+            $videoExtension = $file['video']->getClientOriginalExtension();
+            $mindExtension  = $file['mind']->getClientOriginalExtension();
 
-                $imagePath = $file->image;
-                $videoPath = $file->video;
-                $mindPath  = $file->mind;
+            $imagePath = $file['image']->storeAs(
+                'uploads', $hash . '.' . $imageExtension
+            );
 
-                $request->file($file[$key])->storeAs(
-                    'uploads', $hash . '.' . $extension
-                );
+            $videoPath = $file['video']->storeAs(
+                'uploads', $hash . '.' . $videoExtension
+            );
 
-                Log::info($imagePath);
-                Log::info($videoPath);
-                Log::info($mindPath);
+            $mindPath = $file['mind']->storeAs(
+                'uploads', $hash . '.' . $mindExtension
+            );
 
-                $filesPath = [
-                    'image' => $imagePath,
-                    'video' => $videoPath,
-                    'mind'  => $mindPath
-                ];
+            $filesPath = [
+                'image' => $imagePath,
+                'video' => $videoPath,
+                'mind'  => $mindPath,
+            ];
 
-                // Диспетчируем задачу на обработку данных в очередь
-                ProcessUploadedFiles::dispatch($title, $filesPath, $arGroup->id, $userId);
-            }
+            // Диспетчируем задачу на обработку данных в очередь
+            ProcessUploadedFiles::dispatch($title, $filesPath, $arGroup->id, $userId);
         }
 
         // Возвращаем ответ клиенту без задержки
         return response()->json([
             'status'  => 'ok',
-            'message' => 'Данные успешно загружены и поставлены в очередь на обработку'
+            'message' => 'Данные успешно загружены и поставлены в очередь на обработку',
+            'data'    => [
+                'arGroupId' => $arGroup->id
+            ],
         ]);
     }
 
