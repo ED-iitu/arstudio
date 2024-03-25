@@ -4,12 +4,10 @@ use App\Http\Controllers\Controller;
 use App\Jobs\ProcessUploadedFiles;
 use App\Models\Ar;
 use App\Models\ArGroup;
-use App\Services\YandexUpload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class ArController extends Controller
 {
@@ -30,7 +28,15 @@ class ArController extends Controller
             ]);
         }
 
-        $filesPath = [];
+        $qrCodeText = 'https://api.arstudio.kz/api/ar/live?groupId=' . $arGroup->id;
+
+        $qr = QrCode::size(200)
+            ->format('png')
+            ->style('dot')
+            ->eye('circle')
+            ->color(0, 0, 255)
+            ->margin(1)
+            ->generate($qrCodeText);
 
         $filesArray = $files['data'];
 
@@ -67,7 +73,8 @@ class ArController extends Controller
             'status'  => 'ok',
             'message' => 'Данные успешно загружены и поставлены в очередь на обработку',
             'data'    => [
-                'arGroupId' => $arGroup->id
+                'arGroupId' => $arGroup->id,
+                'qr'        => base64_encode($qr)
             ],
         ]);
     }
@@ -105,6 +112,24 @@ class ArController extends Controller
         return response()->json([
             'status'  => 'ok',
             'data' => $arList
+        ]);
+    }
+
+    public function getArByGroupId(Request $request)
+    {
+        $groupId = $request->get('groupId');
+        $list    = Ar::where('group_id', $groupId)->get();
+
+        if ($list->count() == 0) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Данные не найдены'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'ok',
+            'data'   => $list
         ]);
     }
 }

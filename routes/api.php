@@ -31,6 +31,10 @@ Route::middleware('auth:sanctum')->controller(\App\Http\Controllers\API\V1\ArCon
     Route::get('gallery', 'getGallery');
 });
 
+Route::controller(\App\Http\Controllers\API\V1\ArController::class)->group(function (){
+    Route::get('ar/live', 'getArByGroupId');
+});
+
 Route::controller(\App\Http\Controllers\API\V1\TariffController::class)->group(function (){
     Route::get('tariffs', 'getAll');
 });
