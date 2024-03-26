@@ -83,7 +83,7 @@ class ArController extends Controller
     {
         $groupId = $request->get('groupId');
 
-        $arList = Ar::where('group_id', $groupId)->get();
+        $arList = Ar::where('group_id', $groupId)->with('group')->get();
 
         if ($arList->count() == 0) {
             return response()->json([
