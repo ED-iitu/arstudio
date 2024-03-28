@@ -28,23 +28,14 @@ class ArController extends Controller
             ]);
         }
 
-        $qrCodeText = 'https://api.arstudio.kz/api/ar/live?groupId=' . $arGroup->id;
-
-        $qr = QrCode::size(200)
-            ->format('png')
-            ->style('dot')
-            ->eye('circle')
-            ->color(0, 0, 255)
-            ->margin(1)
-            ->generate($qrCodeText);
-
         $filesArray = $files['data'];
+        $mindFile   = $files['mind'];
 
         foreach ($filesArray as $file) {
             $hash           = Str::random(40);
             $imageExtension = $file['image']->getClientOriginalExtension();
             $videoExtension = $file['video']->getClientOriginalExtension();
-            $mindExtension  = $file['mind']->getClientOriginalExtension();
+            $mindExtension  = $mindFile->getClientOriginalExtension();
 
             $imagePath = $file['image']->storeAs(
                 'uploads', $hash . '.' . $imageExtension
@@ -54,7 +45,7 @@ class ArController extends Controller
                 'uploads', $hash . '.' . $videoExtension
             );
 
-            $mindPath = $file['mind']->storeAs(
+            $mindPath = $mindFile->storeAs(
                 'uploads', $hash . '.' . $mindExtension
             );
 
@@ -74,7 +65,6 @@ class ArController extends Controller
             'message' => 'Данные успешно загружены и поставлены в очередь на обработку',
             'data'    => [
                 'arGroupId' => $arGroup->id,
-                'qr'        => base64_encode($qr)
             ],
         ]);
     }
