@@ -82,8 +82,7 @@ class ArController extends Controller
     public function getByGroupId(Request $request): \Illuminate\Http\JsonResponse
     {
         $groupId = $request->get('groupId');
-
-        $arList = Ar::where('group_id', $groupId)->with('group')->get();
+        $arList  = Ar::where('group_id', $groupId)->with('group')->get();
 
         if ($arList->count() == 0) {
             return response()->json([

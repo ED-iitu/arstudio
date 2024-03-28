@@ -27,12 +27,12 @@ Route::middleware('auth:sanctum')->controller(\App\Http\Controllers\API\V1\Login
 
 Route::middleware('auth:sanctum')->controller(\App\Http\Controllers\API\V1\ArController::class)->group(function (){
     Route::post('ar', 'create');
-    Route::get('ar', 'getByGroupId');
     Route::get('gallery', 'getGallery');
 });
 
 Route::controller(\App\Http\Controllers\API\V1\ArController::class)->group(function (){
     Route::get('ar/live', 'getArByGroupId');
+    Route::get('ar', 'getByGroupId');
 });
 
 Route::controller(\App\Http\Controllers\API\V1\TariffController::class)->group(function (){
