@@ -69,6 +69,7 @@ class YandexUpload
                 $PublishResponse = json_decode($response->getBody()->getContents(), true);
 
                 Log::info("Респонс публикации", $PublishResponse);
+                Log::info($statusCode);
 
                 // Если файл успешно загружен
                 if ($statusCode === 201 || $statusCode === 200) {
@@ -89,6 +90,7 @@ class YandexUpload
                         'file_url' => $publicUrl
                     ];
                 } else {
+                    Log::info("Что то пошло не так");
                     // В случае ошибки возвращаем сообщение об ошибке
                     return response()->json(['error' => 'Failed to upload file'], $statusCode);
                 }
