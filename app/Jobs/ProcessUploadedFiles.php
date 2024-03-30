@@ -47,15 +47,17 @@ class ProcessUploadedFiles implements ShouldQueue
             $localData[$key] = $response['file_url'];
         }
 
+        Log::info('Данные успешно загружены на яндекс диск', [
+            'response' => $localData
+        ]);
+
         Ar::create([
             'group_id'       => $this->arGroupId,
             'user_id'        => $this->userId,
             'file_path'      => $localData['image'],
             'video_path'     => $localData['video'],
             'mind_file_path' => $localData['mind'],
-            'status'         => 0
+            'status'         => 1
         ]);
-
-        return;
     }
 }
