@@ -99,19 +99,19 @@ return [
         /*
          * Set whether or not the multilingual is supported by the BREAD input.
          */
-        'enabled' => false,
+        'enabled' => true,
 
         /*
          * Select default language
          */
-        'default' => 'en',
+        'default' => 'ru',
 
         /*
          * Select languages that are supported.
          */
         'locales' => [
             'en',
-            //'pt',
+            'ru'
         ],
     ],
 
@@ -206,7 +206,7 @@ return [
     ],
 
     // Activate compass when environment is NOT local
-    'compass_in_production' => false,
+    'compass_in_production' => true,
 
     'media' => [
         // The allowed mimetypes to be uploaded through the media-manager.
@@ -217,6 +217,7 @@ return [
           'image/gif',
           'image/bmp',
           'video/mp4',
+          'mind',
         ],
         //Path for media-manager. Relative to the filesystem.
         'path'                => '/',

@@ -36,6 +36,8 @@ class ProcessUploadedFiles implements ShouldQueue
         $disk      = new YandexUpload();
         $localData = [];
 
+        Log::info("HANDLE", $this->filePath);
+
         foreach ($this->filePath as $key => $filePath) {
             Log::info('Загрузка на яндекс диск начата');
             $response = $disk->execute($filePath, $key, $this->title, $this->userId);
