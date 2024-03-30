@@ -68,6 +68,8 @@ class YandexUpload
                 $statusCode = $response->getStatusCode();
                 $PublishResponse = json_decode($response->getBody()->getContents(), true);
 
+                Log::info("Респонс публикации", $PublishResponse);
+
                 // Если файл успешно загружен
                 if ($statusCode === 201 || $statusCode === 200) {
                     // публикуем файл
