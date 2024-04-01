@@ -44,6 +44,18 @@ return [
             'throw' => false,
         ],
 
+        'ps' => [
+            'driver' => 's3',
+            'key' => env('PS_ACCESS_KEY_ID', '4Z2CNH5SG9MPC0616AVM'),
+            'secret' => env('PS__SECRET_ACCESS_KEY', '3n7PyI2wIMOyNKEScx9lTzkZxuGjxVKwPgRKPBYp'),
+            'region' => env('PS_DEFAULT_REGION', 'almaty'),
+            'bucket' => env('PS__BUCKET', 'arobjects'),
+            'url' => env('PS_URL', 'https://arobjects.object.pscloud.io/'),
+            'endpoint' => env('PS_ENDPOINT', 'https://object.pscloud.io/'),
+            'use_path_style_endpoint' => env('PS_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => true,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

@@ -6,6 +6,7 @@ use App\Models\Ar;
 use App\Models\ArGroup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -54,6 +55,8 @@ class ArController extends Controller
                 'video' => $videoPath,
                 'mind'  => $mindPath,
             ];
+
+            Log::info($file);
 
             // Диспетчируем задачу на обработку данных в очередь
             ProcessUploadedFiles::dispatch($title, $filesPath, $arGroup->id, $userId);

@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\ArGroup;
-use App\Services\YandexUpload;
+use App\Services\FileUpload;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -33,18 +33,15 @@ class ProcessUploadedFiles implements ShouldQueue
 
     public function handle()
     {
-        $disk      = new YandexUpload();
+        $disk      = new FileUpload();
         $localData = [];
 
-        Log::info("HANDLE", $this->filePath);
-
         foreach ($this->filePath as $key => $filePath) {
-            Log::info('Загрузка на яндекс диск начата');
+            Log::info($key);
+            Log::info($filePath);
             $response = $disk->execute($filePath, $key, $this->title, $this->userId);
 
-            Log::info('Ответ от яндекса', [
-                'response' => $response
-            ]);
+            Log::info("response", $response);
 
             $localData[$key] = $response['file_url'];
         }
