@@ -23,12 +23,18 @@ class ProcessUploadedFiles implements ShouldQueue
     protected int $arGroupId;
     protected int $userId;
 
-    public function __construct($title, $filesPath, $arGroupId, $userId)
+    protected int $width;
+
+    protected int $height;
+
+    public function __construct($title, $filesPath, $arGroupId, $userId, $width, $height)
     {
         $this->title     = $title;
         $this->filePath  = $filesPath;
         $this->arGroupId = $arGroupId;
         $this->userId    = $userId;
+        $this->width     = $width;
+        $this->height    = $height;
     }
 
     public function handle()
@@ -56,6 +62,8 @@ class ProcessUploadedFiles implements ShouldQueue
             'file_path'      => $localData['image'],
             'video_path'     => $localData['video'],
             'mind_file_path' => $localData['mind'],
+            'width'          => $this->width,
+            'height'         => $this->height,
             'status'         => 1
         ]);
     }

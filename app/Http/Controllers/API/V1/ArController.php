@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Intervention\Image\Facades\Image;
 
 class ArController extends Controller
 {
@@ -42,6 +42,9 @@ class ArController extends Controller
                 'uploads', $hash . '.' . $imageExtension
             );
 
+            $height = Image::make($file['image'])->height();
+            $width = Image::make($file['image'])->width();
+
             $videoPath = $file['video']->storeAs(
                 'uploads', $hash . '.' . $videoExtension
             );
@@ -59,7 +62,7 @@ class ArController extends Controller
             Log::info($file);
 
             // Диспетчируем задачу на обработку данных в очередь
-            ProcessUploadedFiles::dispatch($title, $filesPath, $arGroup->id, $userId);
+            ProcessUploadedFiles::dispatch($title, $filesPath, $arGroup->id, $userId, $width, $height);
         }
 
         // Возвращаем ответ клиенту без задержки
