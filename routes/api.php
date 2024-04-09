@@ -27,6 +27,7 @@ Route::middleware('auth:sanctum')->controller(\App\Http\Controllers\API\V1\Login
 
 Route::middleware('auth:sanctum')->controller(\App\Http\Controllers\API\V1\ArController::class)->group(function (){
     Route::post('ar', 'create');
+    Route::post('ar/update', 'update');
     Route::get('gallery', 'getGallery');
 });
 

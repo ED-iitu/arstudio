@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\API\V1;
 use App\Http\Controllers\Controller;
+use App\Jobs\ProcessUpdateArFiles;
 use App\Jobs\ProcessUploadedFiles;
 use App\Models\Ar;
 use App\Models\ArGroup;
@@ -71,6 +72,74 @@ class ArController extends Controller
             'message' => 'Данные успешно загружены и поставлены в очередь на обработку',
             'data'    => [
                 'arGroupId' => $arGroup->id,
+            ],
+        ]);
+    }
+
+    public function update(Request $request)
+    {
+        $groupId = $request->get('groupId');
+
+        if (empty($groupId)) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Не переданы группа'
+            ], 400);
+        }
+
+        $files         = $request->allFiles();
+        $userId        = Auth::user()->id;
+        $hash          = Str::random(40);
+        $filesArray    = $files['data'];
+        $mindFile      = $files['mind'];
+        $mindExtension = $mindFile->getClientOriginalExtension();
+        $mindPath      = $mindFile->storeAs(
+            'uploads', $hash . '.' . $mindExtension
+        );
+        $imagePath  = '';
+        $videoPath  = '';
+        $rowId      = (int) $request->get('data')[0]['id'] ?? 0;
+        $data       = [];
+
+        foreach ($filesArray as $file) {
+            $hash = Str::random(40);
+
+            if (isset($file['image'])) {
+                $imageExtension = $file['image']->getClientOriginalExtension();
+                $imagePath      = $file['image']->storeAs(
+                    'uploads', $hash . '.' . $imageExtension
+                );
+            }
+
+            if (isset($file['video'])) {
+                $videoExtension = $file['video']->getClientOriginalExtension();
+                $videoPath      = $file['video']->storeAs(
+                    'uploads', $hash . '.' . $videoExtension
+                );
+            }
+
+            if (isset($file['id'])) {
+                $rowId = $data['id'];
+            }
+
+            $data[] = [
+                'id'        => $rowId,
+                'imagePath' => $imagePath,
+                'videoPath' => $videoPath,
+                'mindPath'  => $mindPath
+            ];
+
+        }
+
+        // Диспетчируем задачу на обработку данных в очередь
+        ProcessUpdateArFiles::dispatch($groupId, $userId, $data);
+
+        // Возвращаем ответ клиенту без задержки
+        return response()->json([
+            'status'  => 'ok',
+            'message' => 'Данные успешно загружены и поставлены в очередь на обработку',
+            'data'    => [
+                'arGroupId' => $groupId,
             ],
         ]);
     }
