@@ -79,6 +79,12 @@ class ArController extends Controller
     public function update(Request $request)
     {
         $groupId = $request->get('groupId');
+        $rows    = [];
+        $rowIds  = $request->get('data');
+
+        foreach ($rowIds as $key => $id) {
+            $rows[$key] = $id;
+        }
 
         if (empty($groupId)) {
             return response()->json([
@@ -90,6 +96,25 @@ class ArController extends Controller
         $files         = $request->allFiles();
         $userId        = Auth::user()->id;
         $hash          = Str::random(40);
+
+        if (!empty($rowId) && empty($files['data'])) {
+            foreach ($rows as $row) {
+                Ar::where('id', $row)->delete();
+            }
+
+            return response()->json([
+                'status'  => 'ok',
+                'message' => 'Данные удалены'
+            ], 200);
+        }
+
+        if (!isset($files['data'])) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Не переданы группа'
+            ], 400);
+        }
+
         $filesArray    = $files['data'];
         $mindFile      = $files['mind'];
         $mindExtension = $mindFile->getClientOriginalExtension();
@@ -171,7 +196,7 @@ class ArController extends Controller
         if ($arList->count() == 0) {
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Данные не найдены'
+                'data' => [],
             ], 404);
         }
 
