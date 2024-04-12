@@ -97,7 +97,11 @@ class ArController extends Controller
         $userId        = Auth::user()->id;
         $hash          = Str::random(40);
 
-        if (!empty($rowId) && empty($files['data'])) {
+        Log::info($rowIds);
+        Log::info("айдишки", $rows);
+        Log::info("files" , $files);
+
+        if (!empty($rows) && empty($files['data'])) {
             foreach ($rows as $row) {
                 Ar::where('id', $row)->delete();
             }
@@ -111,7 +115,7 @@ class ArController extends Controller
         if (!isset($files['data'])) {
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Не переданы группа'
+                'message' => 'Не переданы данные'
             ], 400);
         }
 
