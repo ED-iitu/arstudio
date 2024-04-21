@@ -23,6 +23,7 @@ Route::controller(\App\Http\Controllers\API\V1\LoginController::class)->group(fu
 
 Route::middleware('auth:sanctum')->controller(\App\Http\Controllers\API\V1\LoginController::class)->group(function(){
     Route::get('getUser', 'getUser');
+    Route::post('user/update', 'updateProfile');
 });
 
 Route::middleware('auth:sanctum')->controller(\App\Http\Controllers\API\V1\ArController::class)->group(function (){

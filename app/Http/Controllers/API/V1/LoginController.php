@@ -5,6 +5,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -56,6 +57,7 @@ class LoginController extends Controller
     public function register(Request $request)
     {
         $credentials = $request->only('email', 'password');
+        $phone       = $request->get('phone');
         $user        = User::where('email', $credentials['email'])->first();
 
         if ($user) {
@@ -71,6 +73,10 @@ class LoginController extends Controller
         $user->name     = $credentials['email'];
         $user->email    = $credentials['email'];
         $user->password = bcrypt($credentials['password']);
+
+        if ($phone) {
+            $user->phone = $phone;
+        }
         $user->save();
 
         $token = $user->createToken('API Token')->plainTextToken;
@@ -93,6 +99,29 @@ class LoginController extends Controller
             [
                 'status'  => 'ok',
                 'data' => Auth::user()
+            ], 200
+        );
+    }
+
+    public function updateProfile(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $profile = Auth::user();
+
+        if (!Hash::check($request['old_password'], Auth::user()->password)) {
+            return response()->json(
+                [
+                    'status'  => 'error',
+                    'message' => 'Текущий пароль введен не верно'
+                ], 400
+            );
+        }
+
+        $profile->update($request->all());
+
+        return response()->json(
+            [
+                'status'  => 'ok',
+                'message' => 'Данные успешно обновлены'
             ], 200
         );
     }
