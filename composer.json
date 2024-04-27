@@ -15,7 +15,8 @@
         "laravel/tinker": "^2.8",
         "league/flysystem-aws-s3-v3": "^3.26",
         "simplesoftwareio/simple-qrcode": "^4.2",
-        "tcg/voyager": "^1.7"
+        "tcg/voyager": "^1.7",
+        "ext-simplexml": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

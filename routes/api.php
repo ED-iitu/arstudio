@@ -45,3 +45,6 @@ Route::controller(\App\Http\Controllers\API\V1\QuestionController::class)->group
     Route::get('questions', 'getAll');
 });
 
+Route::controller(\App\Http\Controllers\API\V1\PurchaseController::class)->group(function (){
+    Route::get('purchase', 'purchase');
+});

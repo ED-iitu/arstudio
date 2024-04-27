@@ -21,3 +21,8 @@ Route::get('/', function () {
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
 });
+
+Route::prefix('paybox')->group(function () {
+    Route::get('success', [\App\Http\Controllers\PayboxController::class, 'success']);
+    Route::get('failure', [\App\Http\Controllers\PayboxController::class, 'failure']);
+});
