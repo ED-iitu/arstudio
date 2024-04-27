@@ -98,7 +98,7 @@ class LoginController extends Controller
         return response()->json(
             [
                 'status'  => 'ok',
-                'data' => Auth::user()
+                'data' => Auth::user()->load(['tariff', 'transactions'])
             ], 200
         );
     }

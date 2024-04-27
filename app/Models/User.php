@@ -44,4 +44,14 @@ class User extends \TCG\Voyager\Models\User
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function tariff()
+    {
+        return $this->hasOne(Tariff::class, 'id', 'tariff_id');
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }
