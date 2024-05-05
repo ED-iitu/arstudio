@@ -105,14 +105,37 @@ class LoginController extends Controller
 
     public function updateProfile(Request $request): \Illuminate\Http\JsonResponse
     {
-        $profile = Auth::user();
+        $profile     = Auth::user();
+        $password    = $request->get('password');
+        $oldPassword = $request->get('old_password');
 
-        if (!Hash::check($request['old_password'], Auth::user()->password)) {
+        if (isset($password)) {
+            if (Auth::user()->provider !== null) {
+                if (!Hash::check($oldPassword, Auth::user()->password)) {
+                    return response()->json(
+                        [
+                            'status'  => 'error',
+                            'message' => 'Текущий пароль введен не верно'
+                        ], 400
+                    );
+                }
+            }
+
+            $password = bcrypt($password);
+            $data     = [
+                'name'     => $request->get('name'),
+                'email'    => $request->get('email'),
+                'phone'    => $request->get('phone'),
+                'password' => $password
+            ];
+
+            $profile->update($data);
+
             return response()->json(
                 [
-                    'status'  => 'error',
-                    'message' => 'Текущий пароль введен не верно'
-                ], 400
+                    'status'  => 'ok',
+                    'message' => 'Данные успешно обновлены'
+                ], 200
             );
         }
 
