@@ -6,5 +6,5 @@ class UserQuestion extends Model
 {
     protected $table = 'user_questions';
 
-    protected $fillable = ['name'. 'email', 'phone', 'message'];
+    protected $fillable = ['name', 'email', 'phone', 'message'];
 }
