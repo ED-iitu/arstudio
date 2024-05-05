@@ -18,8 +18,17 @@ class ArController extends Controller
         $title = $request->title; // Получаем все данные из запроса
 
         // Получаем загруженные файлы из запроса
-        $files = $request->allFiles();
-        $userId = Auth::user()->id;
+        $files  = $request->allFiles();
+        $user   = Auth::user();
+        $userId = $user->id;
+
+        if ($user->revival_count <= 0) {
+            // Возвращаем ответ клиенту без задержки
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Недостаточно кол-во оживлений',
+            ]);
+        }
 
         $arGroup = ArGroup::where('name', $title)->where('user_id', $userId)->first();
 

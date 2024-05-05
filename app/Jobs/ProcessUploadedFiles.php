@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\ArGroup;
+use App\Models\User;
 use App\Services\FileUpload;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -41,8 +42,14 @@ class ProcessUploadedFiles implements ShouldQueue
     {
         $disk      = new FileUpload();
         $localData = [];
+        $user = User::where('id', $this->userId)->first();
 
         foreach ($this->filePath as $key => $filePath) {
+            if ($user->revival_count <= 0) {
+                Log::info($user->id . " - у пользователя недостаточно кол-во оживлений пропускаем загрузку файлов" );
+                continue;
+            }
+
             Log::info($key);
             Log::info($filePath);
             $response = $disk->execute($filePath, $key, $this->title, $this->userId);
@@ -50,9 +57,12 @@ class ProcessUploadedFiles implements ShouldQueue
             Log::info("response", $response);
 
             $localData[$key] = $response['file_url'];
+
+            $user->revival_count = $user->revival_count -1;
+            $user->save();
         }
 
-        Log::info('Данные успешно загружены на яндекс диск', [
+        Log::info('Данные успешно загружены на диск', [
             'response' => $localData
         ]);
 
