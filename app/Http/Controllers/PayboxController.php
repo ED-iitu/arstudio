@@ -14,7 +14,7 @@ class PayboxController
         $user   = User::where('id', $userId)->first();
         $tariff = Tariff::where('id', $request->get('tarif_id'))->first();
 
-        $user->revival_count = $tariff->revival_count;
+        $user->revival_count = $user->revival_count + $tariff->revival_count;
         $user->tariff_id     = $tariff->id;
         $user->save();
 
