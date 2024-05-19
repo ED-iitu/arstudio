@@ -5,6 +5,7 @@ use App\Jobs\ProcessUpdateArFiles;
 use App\Jobs\ProcessUploadedFiles;
 use App\Models\Ar;
 use App\Models\ArGroup;
+use App\Models\ArInfoImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -98,7 +99,7 @@ class ArController extends Controller
         if (empty($groupId)) {
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Не переданы группа'
+                'message' => 'Не переданы группа',
             ], 400);
         }
 
@@ -117,14 +118,14 @@ class ArController extends Controller
 
             return response()->json([
                 'status'  => 'ok',
-                'message' => 'Данные удалены'
+                'message' => 'Данные удалены',
             ], 200);
         }
 
         if (!isset($files['data'])) {
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Не переданы данные'
+                'message' => 'Не переданы данные',
             ], 400);
         }
 
@@ -164,7 +165,7 @@ class ArController extends Controller
                 'id'        => $rowId,
                 'imagePath' => $imagePath,
                 'videoPath' => $videoPath,
-                'mindPath'  => $mindPath
+                'mindPath'  => $mindPath,
             ];
 
         }
@@ -191,14 +192,14 @@ class ArController extends Controller
         if ($arList->count() == 0) {
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Данные не найдены'
+                'message' => 'Данные не найдены',
             ], 404);
         }
 
         return response()->json([
             'status' => 'ok',
             'group'  => $group,
-            'data'   => $arList
+            'data'   => $arList,
         ]);
     }
 
@@ -215,7 +216,7 @@ class ArController extends Controller
 
         return response()->json([
             'status'  => 'ok',
-            'data' => $arList
+            'data' => $arList,
         ]);
     }
 
@@ -227,13 +228,23 @@ class ArController extends Controller
         if ($list->count() == 0) {
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Данные не найдены'
+                'message' => 'Данные не найдены',
             ], 404);
         }
 
         return response()->json([
             'status' => 'ok',
-            'data'   => $list
+            'data'   => $list,
+        ]);
+    }
+
+    public function getInfoImages(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $images = ArInfoImage::all();
+
+        return response()->json([
+            'status' => 'ok',
+            'data'   => $images,
         ]);
     }
 }
