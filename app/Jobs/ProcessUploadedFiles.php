@@ -58,7 +58,10 @@ class ProcessUploadedFiles implements ShouldQueue
 
             $localData[$key] = $response['file_url'];
 
-            $user->revival_count = $user->revival_count -1;
+            $user->revival_count = $user->revival_count - 1;
+            Log::info('Прошло оживление для пользователя' . $this->userId, [
+                'file_url' => $localData,
+            ]);
             $user->save();
         }
 
