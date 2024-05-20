@@ -57,17 +57,18 @@ class ProcessUploadedFiles implements ShouldQueue
             Log::info("response", $response);
 
             $localData[$key] = $response['file_url'];
-
-            $user->revival_count = $user->revival_count - 1;
-            Log::info('Прошло оживление для пользователя' . $this->userId, [
-                'file_url' => $localData,
-            ]);
-            $user->save();
         }
 
         Log::info('Данные успешно загружены на диск', [
             'response' => $localData
         ]);
+
+        Log::info('Прошло оживление для пользователя' . $this->userId, [
+            'file_url' => $localData,
+        ]);
+
+        $user->revival_count = $user->revival_count - 1;
+        $user->save();
 
         Ar::create([
             'group_id'       => $this->arGroupId,
