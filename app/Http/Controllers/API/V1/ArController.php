@@ -22,6 +22,7 @@ class ArController extends Controller
         $files  = $request->allFiles();
         $user   = Auth::user();
         $userId = $user->id;
+        $source = $request->get('source', 'web');
 
         if ($user->revival_count <= 0) {
             // Возвращаем ответ клиенту без задержки
@@ -37,17 +38,21 @@ class ArController extends Controller
             $arGroup = ArGroup::create([
                 'name'    => $title,
                 'user_id' => $userId,
+                'source'  => $source,
             ]);
         }
 
         $filesArray = $files['data'];
-        $mindFile   = $files['mind'];
+        $mindFile   = $files['mind'] ?? null;
 
         foreach ($filesArray as $file) {
             $hash           = Str::random(40);
             $imageExtension = $file['image']->getClientOriginalExtension();
             $videoExtension = $file['video']->getClientOriginalExtension();
-            $mindExtension  = $mindFile->getClientOriginalExtension();
+
+            if ($source == 'web') {
+                $mindExtension  = $mindFile->getClientOriginalExtension();
+            }
 
             $imagePath = $file['image']->storeAs(
                 'uploads', $hash . '.' . $imageExtension
@@ -60,15 +65,24 @@ class ArController extends Controller
                 'uploads', $hash . '.' . $videoExtension
             );
 
-            $mindPath = $mindFile->storeAs(
-                'uploads', $hash . '.' . $mindExtension
-            );
+            if ($source == 'web') {
+                $mindPath = $mindFile->storeAs(
+                    'uploads', $hash . '.' . $mindExtension
+                );
+            }
 
-            $filesPath = [
-                'image' => $imagePath,
-                'video' => $videoPath,
-                'mind'  => $mindPath,
-            ];
+            if ($source == 'web') {
+                $filesPath = [
+                    'image' => $imagePath,
+                    'video' => $videoPath,
+                    'mind'  => $mindPath,
+                ];
+            } else {
+                $filesPath = [
+                    'image' => $imagePath,
+                    'video' => $videoPath,
+                ];
+            }
 
             Log::info($file);
 
@@ -130,9 +144,9 @@ class ArController extends Controller
         }
 
         $filesArray    = $files['data'];
-        $mindFile      = $files['mind'];
-        $mindExtension = $mindFile->getClientOriginalExtension();
-        $mindPath      = $mindFile->storeAs(
+        $mindFile      = $files['mind'] ?? null;
+        $mindExtension = $mindFile?->getClientOriginalExtension();
+        $mindPath      = $mindFile?->storeAs(
             'uploads', $hash . '.' . $mindExtension
         );
         $imagePath  = '';
