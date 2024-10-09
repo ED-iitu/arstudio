@@ -22,7 +22,10 @@ class ArController extends Controller
         $files  = $request->allFiles();
         $user   = Auth::user();
         $userId = $user->id;
-        $source = $request->source ?? 'web';
+        $source = $request->source;
+
+        Log::info("source");
+        Log::info($source);
 
         if ($user->revival_count <= 0) {
             // Возвращаем ответ клиенту без задержки
