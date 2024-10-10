@@ -75,7 +75,7 @@ class ProcessUploadedFiles implements ShouldQueue
             'user_id'        => $this->userId,
             'file_path'      => $localData['image'],
             'video_path'     => $localData['video'],
-            'mind_file_path' => $localData['mind'],
+            'mind_file_path' => $localData['mind'] ?? null,
             'width'          => $this->width,
             'height'         => $this->height,
             'status'         => 1

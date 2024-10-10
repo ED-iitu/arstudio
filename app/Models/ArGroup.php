@@ -6,7 +6,7 @@ class ArGroup extends Model
 {
     protected $table = 'ar_groups';
 
-    protected $fillable = ['name', 'user_id'];
+    protected $fillable = ['name', 'user_id', 'source'];
 
     public function ar()
     {
