@@ -61,8 +61,33 @@ class ArController extends Controller
                 'uploads', $hash . '.' . $imageExtension
             );
 
-            $height = Image::make($file['image'])->height();
-            $width = Image::make($file['image'])->width();
+            $image  = Image::make($file['image']);
+            $height = $image->height();
+            $width  = $image->width();
+
+            if ($width > 2048 || $height > 2048) {
+                $maxSize = 2048;
+                $k = $maxSize / max($width, $height);
+                $k -= 0.03; // Уменьшение коэффициента
+
+                $newWidth = intval($width * $k);
+                $newHeight = intval($height * $k);
+
+                $image->resize($newWidth, $newHeight, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                });
+
+                // Сохраняем измененное изображение во временный файл
+                $tempPath = sys_get_temp_dir() . '/' . $hash . '.' . $imageExtension;
+                $image->save($tempPath);
+
+                // Обновляем путь к изображению для загрузки
+                $newImage  = new \Illuminate\Http\File($tempPath);
+                $imagePath = $newImage->getPath();
+                $width     = $newWidth;
+                $height    = $newHeight;
+            }
 
             $videoPath = $file['video']->storeAs(
                 'uploads', $hash . '.' . $videoExtension
