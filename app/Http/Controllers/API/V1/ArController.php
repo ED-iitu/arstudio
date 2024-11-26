@@ -66,6 +66,11 @@ class ArController extends Controller
             $width  = $image->width();
 
             if ($width > 2048 || $height > 2048) {
+                Log::info("Картинка не подходит по размерам - уменьшаем" , [
+                    'height' => $height,
+                    'width'  => $width,
+                ]);
+
                 $maxSize = 2048;
                 $k = $maxSize / max($width, $height);
                 $k -= 0.03; // Уменьшение коэффициента
@@ -87,6 +92,12 @@ class ArController extends Controller
                 $imagePath = $newImage->getPath();
                 $width     = $newWidth;
                 $height    = $newHeight;
+
+                Log::info("Новый путь файла" , [
+                    'path' => $imagePath,
+                    'height' => $height,
+                    'width'  => $width,
+                ]);
             }
 
             $videoPath = $file['video']->storeAs(
