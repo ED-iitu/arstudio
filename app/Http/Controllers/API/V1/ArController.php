@@ -36,7 +36,7 @@ class ArController extends Controller
             ]);
         }
 
-        $arGroup = ArGroup::where('name', $title)->where('user_id', $userId)->all();
+        $arGroup = ArGroup::where('name', $title)->where('user_id', $userId)->get();
         $cnt     = count($arGroup);
 
         if ($cnt === 0) {
