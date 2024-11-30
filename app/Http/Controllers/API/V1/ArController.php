@@ -36,19 +36,34 @@ class ArController extends Controller
             ]);
         }
 
-        $arGroup = ArGroup::where('name', $title)->where('user_id', $userId)->get();
-        $cnt     = count($arGroup);
+        $arGroup = ArGroup::where('name', $title)->where('user_id', $userId)->first();
 
-        if ($cnt === 0) {
+        if (!$arGroup) {
+            // Если записи нет, создаем с оригинальным названием
             $arGroup = ArGroup::create([
                 'name'    => $title,
                 'user_id' => $userId,
                 'source'  => $source,
             ]);
         } else {
-            $cnt += 1;
+            // Ищем все записи с похожими названиями
+            $similarGroups = ArGroup::where('name', 'like', $title . '%')
+                ->where('user_id', $userId)
+                ->pluck('name')
+                ->toArray();
+
+            // Определяем максимальный суффикс
+            $maxSuffix = 0;
+            foreach ($similarGroups as $groupName) {
+                if (preg_match('/\((\d+)\)$/', $groupName, $matches)) {
+                    $maxSuffix = max($maxSuffix, (int) $matches[1]);
+                }
+            }
+
+            $newTitle = $title . '(' . ($maxSuffix + 1) . ')';
+
             $arGroup = ArGroup::create([
-                'name'    => $title . "($cnt)",
+                'name'    => $newTitle,
                 'user_id' => $userId,
                 'source'  => $source,
             ]);
