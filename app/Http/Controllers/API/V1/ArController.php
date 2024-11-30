@@ -174,9 +174,9 @@ class ArController extends Controller
         $validated = $request->validate([
             'title'          => 'required|string|max:255',
             'source'         => 'required|string|max:255',
-            'data'           => 'required|array',
-            'data.*.image'   => 'required|file|mimes:jpeg,png,jpg,gif',
-            'data.*.video'   => 'required|file|mimes:mp4,avi,mov,wmv',
+            'data'           => 'array',
+            'data.*.image'   => 'file|mimes:jpeg,png,jpg,gif',
+            'data.*.video'   => 'file|mimes:mp4,avi,mov,wmv',
         ]);
 
         $title  = $validated['title'];
