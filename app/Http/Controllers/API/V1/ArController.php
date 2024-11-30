@@ -170,8 +170,20 @@ class ArController extends Controller
     public function update(Request $request)
     {
         $groupId = $request->get('groupId');
-        $rows    = [];
-        $rowIds  = $request->get('data');
+        // Валидация данных
+        $validated = $request->validate([
+            'title'          => 'required|string|max:255',
+            'source'         => 'required|string|max:255',
+            'data'           => 'required|array',
+            'data.*.image'   => 'required|file|mimes:jpeg,png,jpg,gif',
+            'data.*.video'   => 'required|file|mimes:mp4,avi,mov,wmv',
+        ]);
+
+        $title  = $validated['title'];
+        $source = $validated['source'];
+        $rowIds = $validated['data'];
+
+        $rows = [];
 
         foreach ($rowIds as $key => $id) {
             $rows[$key] = $id;
