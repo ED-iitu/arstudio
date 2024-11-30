@@ -230,7 +230,7 @@ class ArController extends Controller
         );
         $imagePath  = '';
         $videoPath  = '';
-        $rowId      = (int) $rowIds[0]['id'] ?? 0;
+        $rowId      = array_key_first($rowIds) ?? 0;
         $data       = [];
 
         foreach ($filesArray as $file) {
