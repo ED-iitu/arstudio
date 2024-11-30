@@ -9,6 +9,7 @@ use App\Models\ArInfoImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 
@@ -89,7 +90,11 @@ class ArController extends Controller
 
                 // Обновляем путь к изображению для загрузки
                 $newImage  = new \Illuminate\Http\File($tempPath);
-                $imagePath = $newImage->getPath();
+                // Сохранение файла
+                $imagePath = Storage::putFileAs(
+                    'uploads', $newImage, $hash . '.' . $imageExtension
+                );
+
                 $width     = $newWidth;
                 $height    = $newHeight;
 
