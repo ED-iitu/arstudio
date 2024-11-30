@@ -36,11 +36,19 @@ class ArController extends Controller
             ]);
         }
 
-        $arGroup = ArGroup::where('name', $title)->where('user_id', $userId)->first();
+        $arGroup = ArGroup::where('name', $title)->where('user_id', $userId)->all();
+        $cnt     = count($arGroup);
 
-        if (!$arGroup) {
+        if ($cnt === 0) {
             $arGroup = ArGroup::create([
                 'name'    => $title,
+                'user_id' => $userId,
+                'source'  => $source,
+            ]);
+        } else {
+            $cnt += 1;
+            $arGroup = ArGroup::create([
+                'name'    => $title . "($cnt)",
                 'user_id' => $userId,
                 'source'  => $source,
             ]);
