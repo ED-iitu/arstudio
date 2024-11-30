@@ -92,7 +92,7 @@ class ProcessUpdateArFiles implements ShouldQueue
             'user_id'        => $this->userId,
             'file_path'      => $data['image'],
             'video_path'     => $data['video'] ?? '',
-            'mind_file_path' => $data['mind'],
+            'mind_file_path' => $data['mind'] ?? null,
             'width'          => 800,
             'height'         => 400,
             'status'         => 1
