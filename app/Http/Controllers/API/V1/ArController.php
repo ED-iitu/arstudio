@@ -240,10 +240,6 @@ class ArController extends Controller
                 );
             }
 
-            if (isset($file['id'])) {
-                $rowId = $data['id'];
-            }
-
             $data[] = [
                 'id'        => $rowId,
                 'imagePath' => $imagePath,
