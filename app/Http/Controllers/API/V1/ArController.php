@@ -257,6 +257,8 @@ class ArController extends Controller
         $data       = [];
 
         foreach ($rows as $row) {
+            Log::info($row);
+
             $hash = Str::random(40);
 
             if (isset($row['image'])) {
