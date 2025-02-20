@@ -186,12 +186,12 @@ class ArController extends Controller
                 Log::info($file);
 
                 // Добавляем файл, если он передан
-                if (!empty($file[$key]['video'])) {
-                    $rows[$key]['video'] = $file[$key]['video'];
+                if (!empty($file['video'])) {
+                    $rows[$key]['video'] = $file['video'];
                 }
 
                 if (!empty($file[$key]['image'])) {
-                    $rows[$key]['image'] = $file[$key]['image'];
+                    $rows[$key]['image'] = $file['image'];
                 }
             }
         }
