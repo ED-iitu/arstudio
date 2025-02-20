@@ -198,6 +198,13 @@ class ArController extends Controller
 
         // Объединяем id и файлы
         foreach ($rowsData as $key => $value) {
+            if (empty($rows[$key]['image']) && empty($rows[$key]['video'])) {
+                Log::info("Deleted in update");
+                Ar::where('id', $value['id'])->delete();
+
+                continue;
+            }
+
             $rows[$key]['id'] = $value['id'] ?? 0;
 
             // Добавляем файл, если он передан
