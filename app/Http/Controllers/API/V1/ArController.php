@@ -174,9 +174,13 @@ class ArController extends Controller
         $filesData = $request->file('data', []); // Получаем файлы
         $rows = [];
 
+        Log::info("Данные из реквеста");
+        Log::info($rowsData);
+
         // Объединяем id и файлы
         foreach ($rowsData as $key => $value) {
-            $rows[$key]['id'] = $value['id'];
+            Log::info($value);
+            $rows[$key]['id'] = $value['id'] ?? 0;
 
             // Добавляем файл, если он передан
             if (!empty($filesData[$key]['video'])) {
