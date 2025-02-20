@@ -42,25 +42,26 @@ class ProcessUpdateArFiles implements ShouldQueue
 
             $arObject = Ar::where('id', $data['id'])->first();
 
+            $updateData = [];
+
             if (!empty($data['imagePath'])) {
                 $response = $disk->execute($data['imagePath'], 'image', $group->name, $this->userId);
-
-                $arObject->file_path = $response['file_url'];
-                $arObject->save();
+                $updateData['file_path'] = $response['file_url'];
             }
 
             if (!empty($data['videoPath'])) {
                 $response = $disk->execute($data['videoPath'], 'video', $group->name, $this->userId);
-
-                $arObject->video_path = $response['file_url'];
-                $arObject->save();
+                $updateData['video_path'] = $response['file_url'];
             }
 
             if (!empty($data['mindPath'])) {
                 $response = $disk->execute($data['mindPath'], 'mind', $group->name, $this->userId);
+                $updateData['mind_file_path'] = $response['file_url'];
+            }
 
-                $arObject->mind_file_path = $response['file_url'];
-                $arObject->save();
+            // Обновляем только те поля, которые изменились
+            if (!empty($updateData)) {
+                $arObject->update($updateData);
             }
         }
     }
