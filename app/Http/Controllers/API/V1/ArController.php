@@ -176,10 +176,14 @@ class ArController extends Controller
 
         Log::info("Данные из реквеста");
         Log::info($rowsData);
+        Log::info($filesData);
 
         if (empty($rowsData)) {
             foreach ($filesData as $key => $file) {
-                $rows[$key]['id'] =  0;
+                $rows[$key]['id'] = 0;
+
+                Log::info($key);
+                Log::info($file);
 
                 // Добавляем файл, если он передан
                 if (!empty($file[$key]['video'])) {
