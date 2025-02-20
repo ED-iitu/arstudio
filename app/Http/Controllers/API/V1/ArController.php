@@ -169,24 +169,12 @@ class ArController extends Controller
 
     public function update(Request $request)
     {
-        $groupId = $request->get('groupId');
-        // Валидация данных
-        $validated = $request->validate([
-            'title'          => 'required|string|max:255',
-            'source'         => 'required|string|max:255',
-            'data'           => 'array',
-            'data.*.image'   => 'file|mimes:jpeg,png,jpg,gif',
-            'data.*.video'   => 'file|mimes:mp4,avi,mov,wmv',
-        ]);
+        $groupId  = $request->get('groupId');
+        $rowsData = $request->input('data', []); // Получаем массив data
+        $rows     = [];
 
-        $title  = $validated['title'];
-        $source = $validated['source'];
-        $rowIds = $validated['data'];
-
-        $rows = [];
-
-        foreach ($rowIds as $key => $id) {
-            $rows[$key] = $id;
+        foreach ($rowsData as $key => $value) {
+            $rows[$key] = $value;
         }
 
         if (empty($groupId)) {
@@ -200,7 +188,7 @@ class ArController extends Controller
         $userId        = Auth::user()->id;
         $hash          = Str::random(40);
 
-        Log::info($rowIds);
+        Log::info($rowsData);
         Log::info("айдишки", $rows);
         Log::info("files" , $files);
 
@@ -230,7 +218,7 @@ class ArController extends Controller
         );
         $imagePath  = '';
         $videoPath  = '';
-        $rowId      = array_key_first($rowIds) ?? 0;
+        $rowId      = array_key_first($rowsData) ?? 0;
         $data       = [];
 
         foreach ($filesArray as $file) {
