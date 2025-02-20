@@ -170,11 +170,22 @@ class ArController extends Controller
     public function update(Request $request)
     {
         $groupId  = $request->get('groupId');
-        $rowsData = $request->input('data', []); // Получаем массив data
-        $rows     = [];
+        $rowsData = $request->input('data', []); // Получаем id
+        $filesData = $request->file('data', []); // Получаем файлы
+        $rows = [];
 
+        // Объединяем id и файлы
         foreach ($rowsData as $key => $value) {
-            $rows[$key] = $value;
+            $rows[$key]['id'] = $value['id'];
+
+            // Добавляем файл, если он передан
+            if (!empty($filesData[$key]['video'])) {
+                $rows[$key]['video'] = $filesData[$key]['video'];
+            }
+
+            if (!empty($filesData[$key]['image'])) {
+                $rows[$key]['image'] = $filesData[$key]['image'];
+            }
         }
 
         if (empty($groupId)) {
@@ -223,31 +234,56 @@ class ArController extends Controller
         $rowId      = array_key_first($rowsData) ?? 0;
         $data       = [];
 
-        foreach ($filesArray as $file) {
+        foreach ($rows as $row) {
             $hash = Str::random(40);
 
-            if (isset($file['image'])) {
-                $imageExtension = $file['image']->getClientOriginalExtension();
-                $imagePath      = $file['image']->storeAs(
+            if (isset($row['image'])) {
+                $imageExtension = $row['image']->getClientOriginalExtension();
+                $imagePath      = $row['image']->storeAs(
                     'uploads', $hash . '.' . $imageExtension
                 );
             }
 
-            if (isset($file['video'])) {
-                $videoExtension = $file['video']->getClientOriginalExtension();
-                $videoPath      = $file['video']->storeAs(
+            if (isset($row['video'])) {
+                $videoExtension = $row['video']->getClientOriginalExtension();
+                $videoPath      = $row['video']->storeAs(
                     'uploads', $hash . '.' . $videoExtension
                 );
             }
 
             $data[] = [
-                'id'        => $rowId,
+                'id'        => $row['id'],
                 'imagePath' => $imagePath,
                 'videoPath' => $videoPath,
                 'mindPath'  => $mindPath,
             ];
-
         }
+
+//        foreach ($filesArray as $file) {
+//            $hash = Str::random(40);
+//
+//            if (isset($file['image'])) {
+//                $imageExtension = $file['image']->getClientOriginalExtension();
+//                $imagePath      = $file['image']->storeAs(
+//                    'uploads', $hash . '.' . $imageExtension
+//                );
+//            }
+//
+//            if (isset($file['video'])) {
+//                $videoExtension = $file['video']->getClientOriginalExtension();
+//                $videoPath      = $file['video']->storeAs(
+//                    'uploads', $hash . '.' . $videoExtension
+//                );
+//            }
+//
+//            $data[] = [
+//                'id'        => $rowId,
+//                'imagePath' => $imagePath,
+//                'videoPath' => $videoPath,
+//                'mindPath'  => $mindPath,
+//            ];
+//
+//        }
 
         // Диспетчируем задачу на обработку данных в очередь
         ProcessUpdateArFiles::dispatch($groupId, $userId, $data);
