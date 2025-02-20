@@ -190,7 +190,7 @@ class ArController extends Controller
                     $rows[$key]['video'] = $file['video'];
                 }
 
-                if (!empty($file[$key]['image'])) {
+                if (!empty($file['image'])) {
                     $rows[$key]['image'] = $file['image'];
                 }
             }
