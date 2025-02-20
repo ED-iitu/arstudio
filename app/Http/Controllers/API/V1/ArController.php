@@ -203,6 +203,8 @@ class ArController extends Controller
             ], 200);
         }
 
+        Log::info($request);
+
         if (!isset($files['data'])) {
             return response()->json([
                 'status'  => 'error',
